@@ -1,0 +1,23 @@
+name: Build HY IPTV APK
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unzip project
+        run: |
+          unzip -o HY-IPTV-Smart-GitHub-Build.zip
+          mv HY-IPTV-Smart-GitHub-Build/* . 2>/dev/null || true
+          rm -rf HY-IPTV-Smart-GitHub-Build *.zip
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - run: chmod +x gradlew
+      - run: ./gradlew assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HY-IPTV-V60-debug
+          path: app/build/outputs/apk/debug/app-debug.apk
